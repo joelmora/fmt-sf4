@@ -25,12 +25,12 @@
     },
     "autoload": {
         "psr-4": {
-            "isoft\\fmt-sf4\\": "src"
+            "isoft\\fmtsf4\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "isoft\\fmt-sf4\\": "tests"
+            "isoft\\fmtsf4\\": "tests"
         }
     },
     "scripts": {
