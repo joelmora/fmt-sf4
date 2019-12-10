@@ -1,4 +1,5 @@
 <?php
+namespace isoft\fmtsf4;
 
 class internalMicroServices
 {
