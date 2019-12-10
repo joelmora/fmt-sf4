@@ -78,7 +78,7 @@ class internalMicroServices
 
     public static function user_getSecurityChallenge($request, $msTransId)
     {
-        $http_client = new GuzzleHttp\Client(["base_uri" => $GLOBALS["fmt_api_user_url_int"]]);
+        $http_client = new \GuzzleHttp\Client(["base_uri" => $GLOBALS["fmt_api_user_url_int"]]);
         $username = $request->getHttpHeader("X-CONSUMER-USERNAME");
         $response = $new_request = null;
 
@@ -118,7 +118,7 @@ class internalMicroServices
 
     public static function user_respondSecurityChallenge($request, $msTransId, $answer)
     {
-        $http_client = new GuzzleHttp\Client(["base_uri" => $GLOBALS["fmt_api_user_url_int"]]);
+        $http_client = new \GuzzleHttp\Client(["base_uri" => $GLOBALS["fmt_api_user_url_int"]]);
         $username = $request->getHttpHeader("X-CONSUMER-USERNAME");
         $response = $new_request = null;
 
@@ -158,7 +158,7 @@ class internalMicroServices
 
     public static function user_checkPermissionPerRoute($request)
     {
-        $http_client = new GuzzleHttp\Client(["base_uri" => $GLOBALS["fmt_api_user_url_int"]]);
+        $http_client = new \GuzzleHttp\Client(["base_uri" => $GLOBALS["fmt_api_user_url_int"]]);
         $response = $new_request = null;
 
         $domain = '172.17.0.1';
