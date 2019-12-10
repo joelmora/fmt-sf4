@@ -2,5 +2,4 @@
 namespace isoft;
 
 class apiUsers {
-    
 }
