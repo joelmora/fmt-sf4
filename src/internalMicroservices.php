@@ -8,7 +8,7 @@ class internalMicroServices
         try {
             $http_client = new \GuzzleHttp\Client();
             $response = $request = null;
-            $request = $http_client->request('POST', \getenv("fmt_api_comm_url_int") . "/comm/int" . $url, [
+            $request = $http_client->request('POST', \getenv("API_COMM_URI") . "/comm/int" . $url, [
                 'json' => $data
             ]);
             $response = $request->getBody()->getContents();
@@ -33,7 +33,7 @@ class internalMicroServices
         try {
             $http_client = new \GuzzleHttp\Client();
             $response = $request = null;
-            $request = $http_client->request($method, \getenv("fmt_api_trading_url_int") . "/trading/int" . $url, [
+            $request = $http_client->request($method, \getenv("API_TRADING_URI") . "/trading/int" . $url, [
                 'json' => $data
                 //    "headers"=>["X-Consumer-Username"=>"XDEBUG_SESSION=netbeans-xdebug"]
             ]);
@@ -71,7 +71,7 @@ class internalMicroServices
     public static function user_getSecurityChallenge($request, $msTransId)
     {
         try {
-            $http_client = new \GuzzleHttp\Client(["base_uri" => \getenv("fmt_api_user_url_int")]);
+            $http_client = new \GuzzleHttp\Client(["base_uri" => \getenv("API_USER_URI")]);
             $username = $request->getHttpHeader("X-CONSUMER-USERNAME");
             $response = $new_request = null;
 
@@ -111,7 +111,7 @@ class internalMicroServices
     public static function user_respondSecurityChallenge($request, $msTransId, $answer)
     {
         try {
-            $http_client = new \GuzzleHttp\Client(["base_uri" => \getenv("fmt_api_user_url_int")]);
+            $http_client = new \GuzzleHttp\Client(["base_uri" => \getenv("API_USER_URI")]);
             $username = $request->getHttpHeader("X-CONSUMER-USERNAME");
             $response = $new_request = null;
 
@@ -151,7 +151,7 @@ class internalMicroServices
     public static function user_checkPermissionPerRoute($request)
     {
         try {
-            $http_client = new \GuzzleHttp\Client(["base_uri" => \getenv("fmt_api_user_url_int")]);
+            $http_client = new \GuzzleHttp\Client(["base_uri" => \getenv("API_USER_URI")]);
             $response = $new_request = null;
 
             $domain = '172.17.0.1';
