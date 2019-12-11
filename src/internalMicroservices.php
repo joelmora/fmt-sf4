@@ -8,7 +8,7 @@ class internalMicroServices
         try {
             $http_client = new \GuzzleHttp\Client();
             $response = $request = null;
-            $request = $http_client->request('POST', \getenv("host_api_comm_internal") . "/comm/int" . $url, [
+            $request = $http_client->request('POST', \getenv("fmt_api_comm_url_int") . "/comm/int" . $url, [
                 'json' => $data
             ]);
             $response = $request->getBody()->getContents();
@@ -33,7 +33,7 @@ class internalMicroServices
         try {
             $http_client = new \GuzzleHttp\Client();
             $response = $request = null;
-            $request = $http_client->request($method, \getenv("host_api_trading_internal") . "/trading/int" . $url, [
+            $request = $http_client->request($method, \getenv("fmt_api_trading_url_int") . "/trading/int" . $url, [
                 'json' => $data
                 //    "headers"=>["X-Consumer-Username"=>"XDEBUG_SESSION=netbeans-xdebug"]
             ]);
