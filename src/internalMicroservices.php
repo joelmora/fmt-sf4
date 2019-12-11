@@ -5,7 +5,7 @@ class internalMicroServices
 {
     public static function callComm($url, $data = array())
     {
-        $http_client = new GuzzleHttp\Client();
+        $http_client = new \GuzzleHttp\Client();
         $response = $request = null;
         try {
             $request = $http_client->request('POST', \getenv("host_api_comm_internal") . "/comm/int" . $url, [
@@ -30,7 +30,7 @@ class internalMicroServices
 
     public static function callTrading($method, $url, $data = array())
     {
-        $http_client = new GuzzleHttp\Client();
+        $http_client = new \GuzzleHttp\Client();
         $response = $request = null;
         try {
             $request = $http_client->request($method, \getenv("host_api_trading_internal") . "/trading/int" . $url, [
