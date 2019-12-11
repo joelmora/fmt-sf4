@@ -5,9 +5,9 @@ class internalMicroServices
 {
     public static function callComm($url, $data = array())
     {
-        $http_client = new \GuzzleHttp\Client();
-        $response = $request = null;
         try {
+            $http_client = new \GuzzleHttp\Client();
+            $response = $request = null;
             $request = $http_client->request('POST', \getenv("host_api_comm_internal") . "/comm/int" . $url, [
                 'json' => $data
             ]);
@@ -30,9 +30,9 @@ class internalMicroServices
 
     public static function callTrading($method, $url, $data = array())
     {
-        $http_client = new \GuzzleHttp\Client();
-        $response = $request = null;
         try {
+            $http_client = new \GuzzleHttp\Client();
+            $response = $request = null;
             $request = $http_client->request($method, \getenv("host_api_trading_internal") . "/trading/int" . $url, [
                 'json' => $data
                 //    "headers"=>["X-Consumer-Username"=>"XDEBUG_SESSION=netbeans-xdebug"]
