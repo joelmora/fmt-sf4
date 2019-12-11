@@ -158,8 +158,20 @@ class internalMicroServices
             $values = ['XDEBUG_SESSION' => 'netbeans-xdebug'];
             $cookieJar = \GuzzleHttp\Cookie\CookieJar::fromArray($values, $domain);
 
-            $new_request = $http_client->request('POST', '/user/int/checkCredentials', [
-                'json' => [
+            if (\get_class($request) == "Symfony\Component\HttpFoundation\Request") {
+                $json = [
+                    "username" => $request->headers->get("x-consumer-username"),
+                    "microservice" => \getenv("SELF_MS_NAME"),
+                    "method" => $request->getMethod(),
+                    "route" => $request->getPathInfo(),
+                    "actionName" => $request->attributes->get("_route"),
+                    "Fastoken" => $request->headers->get("FASTOKEN"),
+                    "User-Agent" => $request->headers->get("User-Agent"),
+                    "platform" => $request->headers->get("platform"),
+                    "x-real-ip" => $request->headers->get("x-real-ip")
+                ];
+            } else {
+                $json = [
                     "username" => $request->getHttpHeader("x-consumer-username"),
                     "microservice" => \getenv("SELF_MS_NAME"),
                     "method" => $request->getMethod(),
@@ -169,7 +181,11 @@ class internalMicroServices
                     "User-Agent" => $request->getHttpHeader("User-Agent"),
                     "platform" => $request->getHttpHeader("platform"),
                     "x-real-ip" => $request->getHttpHeader("x-real-ip")
-                ],
+                ];
+            }
+
+            $new_request = $http_client->request('POST', '/user/int/checkCredentials', [
+                "json" => $json,
                 "cookies" => $cookieJar
             ]);
             $response = $new_request->getBody()->getContents();
