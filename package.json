@@ -1,0 +1,12 @@
+{
+  "name": "fmt-api-remittance",
+  "version": "1.0.0",
+  "description": "Microservicio de Giros USD y COP a VES",
+  "main": "index.js",
+  "repository": "https://github.com/joelmora/fmt-api-remittance",
+  "author": "nelsonmora48 <nelsonmora48@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "format:php": "prettier --config=prettier.config.js --write --parser=php"
+  }
+}

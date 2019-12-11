@@ -8,13 +8,9 @@ class internalMicroServices
         $http_client = new GuzzleHttp\Client();
         $response = $request = null;
         try {
-            $request = $http_client->request(
-                'POST',
-                \getenv("host_api_comm_internal") . "/comm/int" . $url,
-                [
-                    'json' => $data
-                ]
-            );
+            $request = $http_client->request('POST', \getenv("host_api_comm_internal") . "/comm/int" . $url, [
+                'json' => $data
+            ]);
             $response = $request->getBody()->getContents();
         } catch (\GuzzleHttp\Exception\RequestException $e) {
             if ($e->getResponse()) {
@@ -37,14 +33,10 @@ class internalMicroServices
         $http_client = new GuzzleHttp\Client();
         $response = $request = null;
         try {
-            $request = $http_client->request(
-                $method,
-                \getenv("host_api_trading_internal") . "/trading/int" . $url,
-                [
-                    'json' => $data
-                    //    "headers"=>["X-Consumer-Username"=>"XDEBUG_SESSION=netbeans-xdebug"]
-                ]
-            );
+            $request = $http_client->request($method, \getenv("host_api_trading_internal") . "/trading/int" . $url, [
+                'json' => $data
+                //    "headers"=>["X-Consumer-Username"=>"XDEBUG_SESSION=netbeans-xdebug"]
+            ]);
             $response = $request->getBody()->getContents();
         } catch (\GuzzleHttp\Exception\RequestException $e) {
             if ($e->getResponse()) {
@@ -78,15 +70,15 @@ class internalMicroServices
 
     public static function user_getSecurityChallenge($request, $msTransId)
     {
-        $http_client = new \GuzzleHttp\Client(["base_uri" => \getenv("fmt_api_user_url_int")]);
-        $username = $request->getHttpHeader("X-CONSUMER-USERNAME");
-        $response = $new_request = null;
-
-        $domain = '172.17.0.1';
-        $values = ['XDEBUG_SESSION' => 'netbeans-xdebug'];
-        $cookieJar = \GuzzleHttp\Cookie\CookieJar::fromArray($values, $domain);
-
         try {
+            $http_client = new \GuzzleHttp\Client(["base_uri" => \getenv("fmt_api_user_url_int")]);
+            $username = $request->getHttpHeader("X-CONSUMER-USERNAME");
+            $response = $new_request = null;
+
+            $domain = '172.17.0.1';
+            $values = ['XDEBUG_SESSION' => 'netbeans-xdebug'];
+            $cookieJar = \GuzzleHttp\Cookie\CookieJar::fromArray($values, $domain);
+
             $new_request = $http_client->request('POST', '/user/int/security', [
                 'json' => [
                     "microservice" => "remittance",
@@ -118,15 +110,15 @@ class internalMicroServices
 
     public static function user_respondSecurityChallenge($request, $msTransId, $answer)
     {
-        $http_client = new \GuzzleHttp\Client(["base_uri" => \getenv("fmt_api_user_url_int")]);
-        $username = $request->getHttpHeader("X-CONSUMER-USERNAME");
-        $response = $new_request = null;
-
-        $domain = '172.17.0.1';
-        $values = ['XDEBUG_SESSION' => 'netbeans-xdebug'];
-        $cookieJar = \GuzzleHttp\Cookie\CookieJar::fromArray($values, $domain);
-
         try {
+            $http_client = new \GuzzleHttp\Client(["base_uri" => \getenv("fmt_api_user_url_int")]);
+            $username = $request->getHttpHeader("X-CONSUMER-USERNAME");
+            $response = $new_request = null;
+
+            $domain = '172.17.0.1';
+            $values = ['XDEBUG_SESSION' => 'netbeans-xdebug'];
+            $cookieJar = \GuzzleHttp\Cookie\CookieJar::fromArray($values, $domain);
+
             $new_request = $http_client->request('PUT', '/user/int/security', [
                 'json' => [
                     "username" => $username,
@@ -158,14 +150,14 @@ class internalMicroServices
 
     public static function user_checkPermissionPerRoute($request)
     {
-        $http_client = new \GuzzleHttp\Client(["base_uri" => \getenv("fmt_api_user_url_int")]);
-        $response = $new_request = null;
-
-        $domain = '172.17.0.1';
-        $values = ['XDEBUG_SESSION' => 'netbeans-xdebug'];
-        $cookieJar = \GuzzleHttp\Cookie\CookieJar::fromArray($values, $domain);
-
         try {
+            $http_client = new \GuzzleHttp\Client(["base_uri" => \getenv("fmt_api_user_url_int")]);
+            $response = $new_request = null;
+
+            $domain = '172.17.0.1';
+            $values = ['XDEBUG_SESSION' => 'netbeans-xdebug'];
+            $cookieJar = \GuzzleHttp\Cookie\CookieJar::fromArray($values, $domain);
+
             $new_request = $http_client->request('POST', '/user/int/checkCredentials', [
                 'json' => [
                     "username" => $request->getHttpHeader("x-consumer-username"),
