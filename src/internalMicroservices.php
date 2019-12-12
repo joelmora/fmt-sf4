@@ -165,11 +165,16 @@ class internalMicroServices
                     "method" => $request->getMethod(),
                     "route" => $request->getPathInfo(),
                     "actionName" => $request->attributes->get("_route"),
-                    "Fastoken" => $request->headers->get("FASTOKEN"),
                     "User-Agent" => $request->headers->get("User-Agent"),
                     "platform" => $request->headers->get("platform"),
                     "x-real-ip" => $request->headers->get("x-real-ip")
                 ];
+                if ($request->headers->has("FASTOKEN")) {
+                    $json["Fastoken"] = $request->headers->get("FASTOKEN");
+                }
+                if ($request->headers->has("adminToken")) {
+                    $json["adminToken"] = $request->headers->get("ADMINTOKEN");
+                }
             } else {
                 $json = [
                     "username" => $request->getHttpHeader("x-consumer-username"),
@@ -177,11 +182,16 @@ class internalMicroServices
                     "method" => $request->getMethod(),
                     "route" => $request->getPathInfo(),
                     "actionName" => $request->getParameter("action"),
-                    "Fastoken" => $request->getHttpHeader("FASTOKEN"),
                     "User-Agent" => $request->getHttpHeader("User-Agent"),
                     "platform" => $request->getHttpHeader("platform"),
                     "x-real-ip" => $request->getHttpHeader("x-real-ip")
                 ];
+                if ($request->hasHttpHeader("FASTOKEN")) {
+                    $json["Fastoken"] = $request->headers->get("FASTOKEN");
+                }
+                if ($request->hasHttpHeader("adminToken")) {
+                    $json["adminToken"] = $request->headers->get("ADMINTOKEN");
+                }
             }
 
             $new_request = $http_client->request('POST', '/user/int/checkCredentials', [
