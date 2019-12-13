@@ -8,8 +8,14 @@ class internalMicroServices
         try {
             $http_client = new \GuzzleHttp\Client();
             $response = $request = null;
+
+            $domain = '172.17.0.1';
+            $values = ['XDEBUG_SESSION' => 'netbeans-xdebug'];
+            $cookieJar = \GuzzleHttp\Cookie\CookieJar::fromArray($values, $domain);
+
             $request = $http_client->request('POST', \getenv("API_COMM_URI") . "/comm/int" . $url, [
-                'json' => $data
+                'json' => $data,
+                'cookies' => $cookieJar
             ]);
             $response = $request->getBody()->getContents();
         } catch (\GuzzleHttp\Exception\RequestException $e) {
@@ -33,22 +39,25 @@ class internalMicroServices
         try {
             $http_client = new \GuzzleHttp\Client();
             $response = $request = null;
+
+            $domain = '172.17.0.1';
+            $values = ['XDEBUG_SESSION' => 'netbeans-xdebug'];
+            $cookieJar = \GuzzleHttp\Cookie\CookieJar::fromArray($values, $domain);
+
             $request = $http_client->request($method, \getenv("API_TRADING_URI") . "/trading/int" . $url, [
-                'json' => $data
-                //    "headers"=>["X-Consumer-Username"=>"XDEBUG_SESSION=netbeans-xdebug"]
+                'json' => $data,
+                'cookies' => $cookieJar
             ]);
             $response = $request->getBody()->getContents();
         } catch (\GuzzleHttp\Exception\RequestException $e) {
             if ($e->getResponse()) {
-                throw $e;
-                throw new Exception(
-                    json_decode(
-                        $e
-                            ->getResponse()
-                            ->getBody()
-                            ->getContents()
-                    )
+                $msg = json_decode(
+                    $e
+                        ->getResponse()
+                        ->getBody()
+                        ->getContents()
                 );
+                throw new Exception($msg->description);
             } else {
                 throw $e;
             }
@@ -186,10 +195,10 @@ class internalMicroServices
                     "platform" => $request->getHttpHeader("platform"),
                     "x-real-ip" => $request->getHttpHeader("x-real-ip")
                 ];
-                if ($request->hasHttpHeader("FASTOKEN")) {
+                if ($request->getHttpHeader("FASTOKEN")) {
                     $json["Fastoken"] = $request->headers->get("FASTOKEN");
                 }
-                if ($request->hasHttpHeader("adminToken")) {
+                if ($request->getHttpHeader("adminToken")) {
                     $json["adminToken"] = $request->headers->get("ADMINTOKEN");
                 }
             }
