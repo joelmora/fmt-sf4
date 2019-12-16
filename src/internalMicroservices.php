@@ -196,10 +196,12 @@ class internalMicroServices
                     "x-real-ip" => $request->getHttpHeader("x-real-ip")
                 ];
                 if ($request->getHttpHeader("FASTOKEN")) {
-                    $json["Fastoken"] = $request->headers->get("FASTOKEN");
+                    $json["Fastoken"] = $request->getHttpHeader("FASTOKEN");
                 }
                 if ($request->getHttpHeader("adminToken")) {
-                    $json["adminToken"] = $request->headers->get("ADMINTOKEN");
+                    $json["adminToken"] = $request->getHttpHeader("ADMINTOKEN");
+                } elseif (!isset($json["adminToken"])) {
+                    $json["adminToken"] = $request->getAttribute("adminToken");
                 }
             }
 
