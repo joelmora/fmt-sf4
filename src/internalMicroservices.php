@@ -167,6 +167,12 @@ class internalMicroServices
             $values = ['XDEBUG_SESSION' => 'netbeans-xdebug'];
             $cookieJar = \GuzzleHttp\Cookie\CookieJar::fromArray($values, $domain);
 
+            //Ignora Chequeo de Seguridad para Rutas Internas
+            $routeArray = \explode("/", $request->getPathInfo());
+            if ($routeArray[2] == "int") {
+                return;
+            }
+
             if (\get_class($request) == "Symfony\Component\HttpFoundation\Request") {
                 $json = [
                     "username" => $request->headers->get("x-consumer-username"),
