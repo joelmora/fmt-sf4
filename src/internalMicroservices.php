@@ -182,7 +182,7 @@ class internalMicroServices
                     "actionName" => $request->attributes->get("_route"),
                     "User-Agent" => $request->headers->get("User-Agent"),
                     "platform" => $request->headers->get("platform"),
-                    "x-real-ip" => $request->headers->get("x-real-ip")
+                    "x-forwarded-for" => $request->headers->get("x-forwarded-for")
                 ];
                 if ($request->headers->has("FASTOKEN")) {
                     $json["Fastoken"] = $request->headers->get("FASTOKEN");
@@ -199,7 +199,7 @@ class internalMicroServices
                     "actionName" => $request->getParameter("action"),
                     "User-Agent" => $request->getHttpHeader("User-Agent"),
                     "platform" => $request->getHttpHeader("platform"),
-                    "x-real-ip" => $request->getHttpHeader("x-real-ip")
+                    "x-forwarded-for" => $request->getHttpHeader("x-forwarded-for")
                 ];
                 if ($request->getHttpHeader("FASTOKEN")) {
                     $json["Fastoken"] = $request->getHttpHeader("FASTOKEN");
