@@ -220,4 +220,29 @@ class internalMicroServices
             throw new \Exception('UNAUTOHRIZED', 403);
         }
     }
+
+    public static function user_getCategories($username)
+    {
+        try {
+            $http_client = new \GuzzleHttp\Client(["base_uri" => \getenv("API_USER_URI")]);
+            $response = $new_request = null;
+
+            $domain = '172.17.0.1';
+            $values = ['XDEBUG_SESSION' => 'netbeans-xdebug'];
+            $cookieJar = \GuzzleHttp\Cookie\CookieJar::fromArray($values, $domain);
+
+            $json = [
+                "username" => $username
+            ];
+
+            $new_request = $http_client->request('POST', '/user/int/userCategories', [
+                "json" => $json,
+                "cookies" => $cookieJar
+            ]);
+            $response = \json_decode($new_request->getBody()->getContents(), true);
+            return $response;
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            throw new \Exception('ERROR GETTING CREDENTIALS', 500);
+        }
+    }
 }
