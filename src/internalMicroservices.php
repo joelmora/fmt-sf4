@@ -245,4 +245,35 @@ class internalMicroServices
             throw new \Exception('ERROR GETTING CREDENTIALS', 500);
         }
     }
+
+    //Sends mail
+    public static function comm_send_email($ms, $to, $subject, $content, $data, $block = null)
+    {
+        //Prepares request body
+        $body = [
+            'microservice' => $ms,
+            'to' => $to,
+            'subject' => $subject,
+            'content' => $content,
+            'data' => $data,
+            'block' => $block
+        ];
+        //Prepares client
+        $client = new \GuzzleHttp\Client(['base_uri' => getenv('API_COMM_URI')]);
+
+        //Sends request
+        try {
+            $domain = '172.17.0.1';
+            $values = ['XDEBUG_SESSION' => 'netbeans-xdebug'];
+            $cookieJar = \GuzzleHttp\Cookie\CookieJar::fromArray($values, $domain);
+
+            $request = $client->request('POST', '/comm/int/mail', [
+                'body' => json_encode($body),
+                'headers' => ['Accept-Language' => 'ES', 'Content-Type' => 'application/json'],
+                'cookies' => $cookieJar
+            ]);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            throw new \Exception('ERROR SENDING EMAIL', 500);
+        }
+    }
 }
