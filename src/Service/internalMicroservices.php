@@ -1,7 +1,7 @@
 <?php
-namespace isoft\fmtsf4;
+namespace isoft\fmtsf4\Service;
 
-class internalMicroServices
+class InternalMicroServices
 {
     public static function callComm($url, $data = array())
     {
