@@ -270,6 +270,26 @@ class InternalMicroServices
         }
     }
 
+    public static function user_getCategoryUsers($categoryName)
+    {
+        try {
+            $http_client = new \GuzzleHttp\Client(["base_uri" => \getenv("API_USER_URI")]);
+            $response = $new_request = null;
+
+            $domain = '172.17.0.1';
+            $values = ['XDEBUG_SESSION' => 'netbeans-xdebug'];
+            $cookieJar = \GuzzleHttp\Cookie\CookieJar::fromArray($values, $domain);
+
+            $new_request = $http_client->request('GET', '/user/int/categories/' . $categoryName . "/users", [
+                "cookies" => $cookieJar
+            ]);
+            $response = \json_decode($new_request->getBody()->getContents(), true);
+            return $response['data'];
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            throw new \Exception('ERROR GETTING USER DATA', 500);
+        }
+    }
+
     //Sends mail
     public static function comm_send_email($ms, $to, $subject, $content, $data, $block = null)
     {
