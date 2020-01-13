@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
-use App\Exceptions\ValidationException;
+use isoft\fmtsf4\Exceptions\ValidationException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Translation\TranslatorInterface;
 use isoft\fmtsf4\Helpers\LanguageTrait;
@@ -51,8 +51,6 @@ class ApiExceptionsHandler
     {
         //trying to use another http method
         if ($exception instanceof ValidationException) {
-            //            $data['description'] = $exception->getMessage();
-            //            return $data;
             return $this->responseErrors($exception->getMessages());
         }
 
