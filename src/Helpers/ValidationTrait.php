@@ -1,7 +1,7 @@
 <?php
 namespace isoft\fmtsf4\Helpers;
 
-use App\Exceptions\ValidationException;
+use isoft\fmtsf4\Exceptions\ValidationException;
 use Symfony\Component\Validator\Validation;
 
 trait ValidationTrait
