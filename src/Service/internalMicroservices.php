@@ -26,7 +26,7 @@ class InternalMicroServices
                         ->getBody()
                         ->getContents()
                 );
-                throw new Exception($msg->message);
+                throw new \Exception($msg->message);
             } else {
                 throw $e;
             }
@@ -57,7 +57,7 @@ class InternalMicroServices
                         ->getBody()
                         ->getContents()
                 );
-                throw new Exception($msg->description);
+                throw new \Exception($msg->description);
             } else {
                 throw $e;
             }
@@ -110,7 +110,7 @@ class InternalMicroServices
                         ->getBody()
                         ->getContents()
                 );
-                throw new Exception($msg->description);
+                throw new \Exception($msg->description);
             } else {
                 throw $e;
             }
@@ -150,7 +150,7 @@ class InternalMicroServices
                         ->getBody()
                         ->getContents()
                 );
-                throw new Exception($msg->description);
+                throw new \Exception($msg->description);
             } else {
                 throw $e;
             }
