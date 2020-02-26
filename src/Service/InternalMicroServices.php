@@ -1,8 +1,11 @@
 <?php
 namespace isoft\fmtsf4\Service;
+use isoft\fmtsf4\Helpers\WebSocketsTrait;
 
 class InternalMicroServices
 {
+    use WebSocketsTrait;
+
     public static function callComm($url, $data = array())
     {
         try {
@@ -159,6 +162,8 @@ class InternalMicroServices
 
     public static function user_checkPermissionPerRoute($request)
     {
+        $wsClient = WebSocketsTrait::startClientWS();
+
         try {
             $http_client = new \GuzzleHttp\Client(["base_uri" => \getenv("API_USER_URI")]);
             $response = $new_request = null;
@@ -210,13 +215,39 @@ class InternalMicroServices
                     $json["adminToken"] = $request->getAttribute("adminToken");
                 }
             }
+            $json["seq"] = \uniqid();
 
             $new_request = $http_client->request('POST', '/user/int/checkCredentials', [
                 "json" => $json,
                 "cookies" => $cookieJar
             ]);
             $response = $new_request->getBody()->getContents();
+
+            unset($json["User-Agent"]);
+            unset($json["adminToken"]);
+            unset($json["fastoken"]);
+            $json["response"] = 200;
+            WebSocketsTrait::logClientWS($wsClient, [
+                's' => [
+                    'event' => '/internalRequests'
+                ],
+                'd' => [
+                    "data" => $json
+                ]
+            ]);
         } catch (\GuzzleHttp\Exception\RequestException $e) {
+            unset($json["User-Agent"]);
+            unset($json["adminToken"]);
+            unset($json["fastoken"]);
+            $json["response"] = 403;
+            WebSocketsTrait::logClientWS($wsClient, [
+                's' => [
+                    'event' => '/internalRequests'
+                ],
+                'd' => [
+                    "data" => $json
+                ]
+            ]);
             throw new \Exception('UNAUTOHRIZED', 403);
         }
     }
