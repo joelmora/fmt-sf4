@@ -124,7 +124,7 @@ class JournalSubscriber implements EventSubscriber
                     unset($arrayEntity->$i);
                 }
             }
-        } catch (Exception $exc) {
+        } catch (\Exception $exc) {
         }
 
         $entry = new Journal();

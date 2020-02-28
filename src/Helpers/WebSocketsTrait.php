@@ -56,7 +56,7 @@ trait WebSocketsTrait
             // if (!isset($this->clientWs) and !is_object($this->clientWs)) {
             return new Client($uri);
             // }
-        } catch (Exception $exc) {
+        } catch (\Exception $exc) {
         }
     }
 
@@ -67,7 +67,7 @@ trait WebSocketsTrait
             if (is_object($clientWs)) {
                 $clientWs->close();
             }
-        } catch (Exception $exc) {
+        } catch (\Exception $exc) {
         }
     }
 
@@ -75,7 +75,7 @@ trait WebSocketsTrait
     {
         try {
             $clientWs->send(json_encode($message));
-        } catch (Exception $exc) {
+        } catch (\Exception $exc) {
         }
     }
 }
