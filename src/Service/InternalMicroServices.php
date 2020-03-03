@@ -6,6 +6,27 @@ class InternalMicroServices
 {
     use WebSocketsTrait;
 
+    private static function monitorInternalRequest($dstService, $url, $uniqid, $stage)
+    {
+        $wsClient = WebSocketsTrait::startClientWS();
+        $json = [
+            "uniqid" => $uniqid,
+            "from" => \getenv("SELF_MS_NAME"),
+            "to" => $dstService,
+            "microtime" => microtime(1),
+            "stage" => $stage,
+            "url" => $url
+        ];
+        WebSocketsTrait::logClientWS($wsClient, [
+            's' => [
+                'event' => '/internalRequests'
+            ],
+            'd' => [
+                "data" => $json
+            ]
+        ]);
+    }
+
     public static function callComm($url, $data = array())
     {
         try {
@@ -16,12 +37,20 @@ class InternalMicroServices
             $values = ['XDEBUG_SESSION' => 'netbeans-xdebug'];
             $cookieJar = \GuzzleHttp\Cookie\CookieJar::fromArray($values, $domain);
 
+            $uniqid = \uniqid();
+            self::monitorInternalRequest("COMM", $url, $uniqid, "REQUEST");
+
             $request = $http_client->request('POST', \getenv("API_COMM_URI") . "/comm/int" . $url, [
                 'json' => $data,
                 'cookies' => $cookieJar
             ]);
+
+            self::monitorInternalRequest("COMM", $url, $uniqid, "RESPONSE");
+
             $response = $request->getBody()->getContents();
         } catch (\GuzzleHttp\Exception\RequestException $e) {
+            self::monitorInternalRequest("COMM", $url, $uniqid, "ERROR");
+
             if ($e->getResponse()) {
                 $msg = json_decode(
                     $e
@@ -47,12 +76,20 @@ class InternalMicroServices
             $values = ['XDEBUG_SESSION' => 'netbeans-xdebug'];
             $cookieJar = \GuzzleHttp\Cookie\CookieJar::fromArray($values, $domain);
 
+            $uniqid = \uniqid();
+            self::monitorInternalRequest("TRADING", $url, $uniqid, "REQUEST");
+
             $request = $http_client->request($method, \getenv("API_TRADING_URI") . "/trading/int" . $url, [
                 'json' => $data,
                 'cookies' => $cookieJar
             ]);
+
+            self::monitorInternalRequest("TRADING", $url, $uniqid, "RESPONSE");
+
             $response = $request->getBody()->getContents();
         } catch (\GuzzleHttp\Exception\RequestException $e) {
+            self::monitorInternalRequest("TRADING", $url, $uniqid, "ERROR");
+
             if ($e->getResponse()) {
                 $msg = json_decode(
                     $e
@@ -82,6 +119,7 @@ class InternalMicroServices
 
     public static function user_getSecurityChallenge($request, $msTransId)
     {
+        $url = '/user/int/security';
         try {
             $http_client = new \GuzzleHttp\Client(["base_uri" => \getenv("API_USER_URI")]);
             $username = $request->getHttpHeader("X-CONSUMER-USERNAME");
@@ -91,7 +129,10 @@ class InternalMicroServices
             $values = ['XDEBUG_SESSION' => 'netbeans-xdebug'];
             $cookieJar = \GuzzleHttp\Cookie\CookieJar::fromArray($values, $domain);
 
-            $new_request = $http_client->request('POST', '/user/int/security', [
+            $uniqid = \uniqid();
+            self::monitorInternalRequest("USER", $url, $uniqid, "REQUEST");
+
+            $new_request = $http_client->request('POST', $url, [
                 'json' => [
                     "microservice" => "remittance",
                     "msTransId" => $msTransId
@@ -103,9 +144,14 @@ class InternalMicroServices
                 ],
                 "cookies" => $cookieJar
             ]);
+
+            self::monitorInternalRequest("USER", $url, $uniqid, "RESPONSE");
+
             $response = $new_request->getBody()->getContents();
             return json_decode($response);
         } catch (\GuzzleHttp\Exception\RequestException $e) {
+            self::monitorInternalRequest("USER", $url, $uniqid, "ERROR");
+
             if ($e->getResponse()) {
                 $msg = json_decode(
                     $e
@@ -122,6 +168,7 @@ class InternalMicroServices
 
     public static function user_respondSecurityChallenge($request, $msTransId, $answer)
     {
+        $url = '/user/int/security';
         try {
             $http_client = new \GuzzleHttp\Client(["base_uri" => \getenv("API_USER_URI")]);
             $username = $request->getHttpHeader("X-CONSUMER-USERNAME");
@@ -131,7 +178,10 @@ class InternalMicroServices
             $values = ['XDEBUG_SESSION' => 'netbeans-xdebug'];
             $cookieJar = \GuzzleHttp\Cookie\CookieJar::fromArray($values, $domain);
 
-            $new_request = $http_client->request('PUT', '/user/int/security', [
+            $uniqid = \uniqid();
+            self::monitorInternalRequest("USER", $url, $uniqid, "REQUEST");
+
+            $new_request = $http_client->request('PUT', $url, [
                 'json' => [
                     "username" => $username,
                     "msTransId" => $msTransId,
@@ -143,9 +193,14 @@ class InternalMicroServices
                 ],
                 "cookies" => $cookieJar
             ]);
+
+            self::monitorInternalRequest("USER", $url, $uniqid, "RESPONSE");
+
             $response = $new_request->getBody()->getContents();
             return json_decode($response);
         } catch (\GuzzleHttp\Exception\RequestException $e) {
+            self::monitorInternalRequest("USER", $url, $uniqid, "ERROR");
+
             if ($e->getResponse()) {
                 $msg = json_decode(
                     $e
@@ -174,7 +229,7 @@ class InternalMicroServices
 
             //Ignora Chequeo de Seguridad para Rutas Internas
             $routeArray = \explode("/", $request->getPathInfo());
-            if ($routeArray[2] == "int") {
+            if ($routeArray[2] == "int" or $routeArray[2] == "pub") {
                 return;
             }
 
@@ -191,9 +246,11 @@ class InternalMicroServices
                 ];
                 if ($request->headers->has("FASTOKEN")) {
                     $json["Fastoken"] = $request->headers->get("FASTOKEN");
+                    $json["app"] = "frontend";
                 }
                 if ($request->headers->has("adminToken")) {
                     $json["adminToken"] = $request->headers->get("ADMINTOKEN");
+                    $json["app"] = "backend";
                 }
             } else {
                 $json = [
@@ -208,13 +265,16 @@ class InternalMicroServices
                 ];
                 if ($request->getHttpHeader("FASTOKEN")) {
                     $json["Fastoken"] = $request->getHttpHeader("FASTOKEN");
+                    $json["app"] = "frontend";
                 }
                 if ($request->getHttpHeader("adminToken")) {
                     $json["adminToken"] = $request->getHttpHeader("ADMINTOKEN");
                 } elseif (!isset($json["adminToken"])) {
                     $json["adminToken"] = $request->getAttribute("adminToken");
+                    $json["app"] = "backend";
                 }
             }
+
             $json["seq"] = \uniqid();
 
             $new_request = $http_client->request('POST', '/user/int/checkCredentials', [
@@ -254,6 +314,7 @@ class InternalMicroServices
 
     public static function user_getCategories($username)
     {
+        $url = '/user/int/userCategories';
         try {
             $http_client = new \GuzzleHttp\Client(["base_uri" => \getenv("API_USER_URI")]);
             $response = $new_request = null;
@@ -266,19 +327,27 @@ class InternalMicroServices
                 "username" => $username
             ];
 
-            $new_request = $http_client->request('POST', '/user/int/userCategories', [
+            $uniqid = \uniqid();
+            self::monitorInternalRequest("USER", $url, $uniqid, "REQUEST");
+
+            $new_request = $http_client->request('POST', $url, [
                 "json" => $json,
                 "cookies" => $cookieJar
             ]);
+
+            self::monitorInternalRequest("USER", $url, $uniqid, "RESPONSE");
+
             $response = \json_decode($new_request->getBody()->getContents(), true);
             return $response;
         } catch (\GuzzleHttp\Exception\RequestException $e) {
+            self::monitorInternalRequest("USER", $url, $uniqid, "ERROR");
             throw new \Exception('ERROR GETTING CREDENTIALS', 500);
         }
     }
 
     public static function user_getUser($username)
     {
+        $url = '/user/int/user/';
         try {
             $http_client = new \GuzzleHttp\Client(["base_uri" => \getenv("API_USER_URI")]);
             $response = $new_request = null;
@@ -291,18 +360,26 @@ class InternalMicroServices
                 "username" => $username
             ];
 
-            $new_request = $http_client->request('GET', '/user/int/user/' . $username, [
+            $uniqid = \uniqid();
+            self::monitorInternalRequest("USER", $url, $uniqid, "REQUEST");
+
+            $new_request = $http_client->request('GET', $url . $username, [
                 "cookies" => $cookieJar
             ]);
+
+            self::monitorInternalRequest("USER", $url, $uniqid, "RESPONSE");
+
             $response = \json_decode($new_request->getBody()->getContents(), true);
             return $response['data'];
         } catch (\GuzzleHttp\Exception\RequestException $e) {
+            self::monitorInternalRequest("USER", $url, $uniqid, "ERROR");
             throw new \Exception('ERROR GETTING USER DATA', 500);
         }
     }
 
     public static function user_getCategoryUsers($categoryName)
     {
+        $url = '/user/int/categories/' . $categoryName . "/users";
         try {
             $http_client = new \GuzzleHttp\Client(["base_uri" => \getenv("API_USER_URI")]);
             $response = $new_request = null;
@@ -311,12 +388,19 @@ class InternalMicroServices
             $values = ['XDEBUG_SESSION' => 'netbeans-xdebug'];
             $cookieJar = \GuzzleHttp\Cookie\CookieJar::fromArray($values, $domain);
 
-            $new_request = $http_client->request('GET', '/user/int/categories/' . $categoryName . "/users", [
+            $uniqid = \uniqid();
+            self::monitorInternalRequest("USER", $url, $uniqid, "REQUEST");
+
+            $new_request = $http_client->request('GET', $url, [
                 "cookies" => $cookieJar
             ]);
+
+            self::monitorInternalRequest("USER", $url, $uniqid, "RESPONSE");
+
             $response = \json_decode($new_request->getBody()->getContents(), true);
             return $response['data'];
         } catch (\GuzzleHttp\Exception\RequestException $e) {
+            self::monitorInternalRequest("USER", $url, $uniqid, "ERROR");
             throw new \Exception('ERROR GETTING USER DATA', 500);
         }
     }
@@ -324,6 +408,7 @@ class InternalMicroServices
     //Sends mail
     public static function comm_send_email($ms, $to, $subject, $content, $data, $block = null)
     {
+        $url = '/comm/int/mail';
         //Prepares request body
         $body = [
             'microservice' => $ms,
@@ -342,12 +427,18 @@ class InternalMicroServices
             $values = ['XDEBUG_SESSION' => 'netbeans-xdebug'];
             $cookieJar = \GuzzleHttp\Cookie\CookieJar::fromArray($values, $domain);
 
-            $request = $client->request('POST', '/comm/int/mail', [
+            $uniqid = \uniqid();
+            self::monitorInternalRequest("COMM", $url, $uniqid, "REQUEST");
+
+            $request = $client->request('POST', $url, [
                 'body' => json_encode($body),
                 'headers' => ['Accept-Language' => 'ES', 'Content-Type' => 'application/json'],
                 'cookies' => $cookieJar
             ]);
+
+            self::monitorInternalRequest("COMM", $url, $uniqid, "RESPONSE");
         } catch (\GuzzleHttp\Exception\RequestException $e) {
+            self::monitorInternalRequest("COMM", $url, $uniqid, "ERROR");
             throw new \Exception('ERROR SENDING EMAIL', 500);
         }
     }
