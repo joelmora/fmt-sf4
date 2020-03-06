@@ -19,7 +19,13 @@ class JournalSubscriber implements EventSubscriber
         'isoft\fmtsf4\Entity\Journal',
         'App\Entity\AwsCloudWatch',
         'App\Entity\Session',
-        'App\Entity\Credential'
+        'App\Entity\Credential',
+        'App\Entity\Year',
+        'App\Entity\Month',
+        'App\Entity\Day',
+        'App\Entity\Hour',
+        'App\Entity\Minute',
+        'App\Entity\Second'
     ];
     private $serializer;
 
