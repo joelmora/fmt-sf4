@@ -85,6 +85,7 @@ class ApiExceptionsHandler
         }
 
         //general exceptions, not showing specific trace or message
+        error_log($exception->getMessage());
         return $this->response($this->translator->trans('WRONG'), Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
@@ -101,6 +102,7 @@ class ApiExceptionsHandler
                 return $this->response($exception->getMessage(), Response::HTTP_NOT_FOUND);
                 break;
             default:
+                error_log($exception->getMessage());
                 return $this->response($this->translator->trans('WRONG'), Response::HTTP_INTERNAL_SERVER_ERROR);
                 break;
         }
